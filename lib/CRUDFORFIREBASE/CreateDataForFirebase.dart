@@ -1,8 +1,6 @@
 import 'dart:io' show File;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -98,39 +96,50 @@ class _TextFeildsState extends State<TextFeilds> {
   }
 
   Future<void> AddCaption() async {
-    try {
-      FirebaseStorage _storage = FirebaseStorage.instance;
-
-      // Create a reference to the location you want to upload to in Firebase Storage
-      firebase_storage.Reference reference = _storage
-          .ref()
-          .child("images/${DateTime.now().millisecondsSinceEpoch}");
-
-      // Upload the file to Firebase Storage
-      firebase_storage.UploadTask uploadTask =
-          reference.putFile(_selectedImage);
-
-      // Wait till the file is uploaded, then get the download URL
-      String imageUrl = await (await uploadTask).ref.getDownloadURL();
-
-      // Create a user object with the image URL
-      final user = Users(
+    final user = Users(
         captions: controllerName.text,
-        photos: imageUrl,
+        photos: _selectedImage != null ? _selectedImage!.path : '',
         like: 0,
-        comment:
-            "", // You might want to update this to the actual comment value
-      );
+        comment: '');
+    createUser(user);
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => ReadUsers()));
 
-      // Save user data to Firestore
-      createUser(user);
+    // Background color
 
-      // Navigate to the ReadUsers screen
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => ReadUsers()));
-    } catch (ex) {
-      print(ex.toString());
-    }
+    // // try {
+    // //   FirebaseStorage _storage = FirebaseStorage.instance;
+
+    // //   // Create a reference to the location you want to upload to in Firebase Storage
+    // //   firebase_storage.Reference reference = _storage
+    // //       .ref()
+    // //       .child("images/${DateTime.now().millisecondsSinceEpoch}");
+
+    // //   // Upload the file to Firebase Storage
+    // //   firebase_storage.UploadTask uploadTask =
+    // //       reference.putFile(_selectedImage);
+
+    // //   // Wait till the file is uploaded, then get the download URL
+    // //   String imageUrl = await (await uploadTask).ref.getDownloadURL();
+
+    //   // Create a user object with the image URL
+    //   final user = Users(
+    //     captions: controllerName.text,
+    //     photos: _selectedImage,
+    //     like: 0,
+    //     comment:
+    //         "", // You might want to update this to the actual comment value
+    //   );
+
+    //   // Save user data to Firestore
+    //   createUser(user);
+
+    //   // Navigate to the ReadUsers screen
+    //   Navigator.of(context)
+    //       .push(MaterialPageRoute(builder: (context) => ReadUsers()));
+    // // } catch (ex) {
+    // //   print(ex.toString());
+    // // }
   }
 
 //function that pick image from gallery
