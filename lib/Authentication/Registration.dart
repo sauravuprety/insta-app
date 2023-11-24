@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../view_model/registration_view_model.dart';
 import 'Login.dart';
 
 class RegistrationPage extends StatefulWidget {
@@ -11,7 +12,7 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final RegistrationViewModel _viewModel = RegistrationViewModel();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -65,12 +66,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
   //function for registration
 
   Future<void> _register() async {
-    try {
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
+    UserCredential? userCredential = await _viewModel.registerUser(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (userCredential != null) {
       // Navigate to the login page on successful registration
       Navigator.pushReplacement(
         context,
@@ -78,13 +79,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
           builder: (context) => LoginPage(),
         ),
       );
-    } catch (e) {
-      // If the email is already in use, show an alert
-      if (e is FirebaseAuthException && e.code == 'email-already-in-use') {
-        _showErrorAlert('Email Already Registered',
-            'The provided email address is already registered. Please use a different email.');
-      }
-      // You can handle other registration errors here
+    } else {
+      // Handle registration failure
+      _showErrorAlert(
+        'Registration Failed',
+        'Failed to register. Please try again.',
+      );
     }
   }
 

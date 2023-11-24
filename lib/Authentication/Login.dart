@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:instaapp/Authentication/Registration.dart';
 
-import '../CRUDFORFIREBASE/ReadfromFirebase.dart';
+import '../view_model/Authorization_view_model.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,7 +11,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final AuthViewModel _authViewModel = AuthViewModel();
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -105,14 +105,11 @@ class _LoginPageState extends State<LoginPage> {
 //function for logging in the firebase
   Future<void> _login() async {
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      await _authViewModel.login(
         email: _emailController.text,
         password: _passwordController.text,
+        context: context,
       );
-      print('User logged in: ${userCredential.user?.email}');
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const ReadUsers()));
     } catch (e) {}
   }
 }
