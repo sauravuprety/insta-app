@@ -39,6 +39,7 @@ dependencies:
   utility: ^1.0.3
   firebase_storage: ^11.5.1
   firebase_core: ^2.22.0
+  shared_preferences: ^2.2.2
  
   firebase_database: ^10.2.5
   image_picker: ^1.0.4
